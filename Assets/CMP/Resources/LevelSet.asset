@@ -1,0 +1,115 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b8f3a2c41d9e4e7a8c6f0d2b5a191e37, type: 3}
+  m_Name: LevelSet
+  m_EditorClassIdentifier: 
+  Levels:
+  - Grid: {fileID: 11400000, guid: 61ca0f4d1e2c4da7a69640dab590b2c0, type: 2}
+    PacmanSpeedMultiplier: 1.0
+    GhostSpeedMultiplier: 1.0
+    FrightenedDuration: 7.0
+    GhostCount: 3
+  - Grid: {fileID: 11400000, guid: 2307806b2bf64c2da8efa92217bd2f47, type: 2}
+    PacmanSpeedMultiplier: 1.005
+    GhostSpeedMultiplier: 1.025
+    FrightenedDuration: 6.75
+    GhostCount: 3
+  - Grid: {fileID: 11400000, guid: 86f5660b5a8d44abb611c35f44a678d9, type: 2}
+    PacmanSpeedMultiplier: 1.01
+    GhostSpeedMultiplier: 1.05
+    FrightenedDuration: 6.5
+    GhostCount: 3
+  - Grid: {fileID: 11400000, guid: 6f625cd1a8e347078ec25404f846da8e, type: 2}
+    PacmanSpeedMultiplier: 1.015
+    GhostSpeedMultiplier: 1.075
+    FrightenedDuration: 6.25
+    GhostCount: 3
+  - Grid: {fileID: 11400000, guid: bdbddb454db7458b815203a1c7144639, type: 2}
+    PacmanSpeedMultiplier: 1.02
+    GhostSpeedMultiplier: 1.1
+    FrightenedDuration: 6.0
+    GhostCount: 3
+  - Grid: {fileID: 11400000, guid: 141ca4c188ae4f0e905c4080fcb301d9, type: 2}
+    PacmanSpeedMultiplier: 1.025
+    GhostSpeedMultiplier: 1.125
+    FrightenedDuration: 5.75
+    GhostCount: 3
+  - Grid: {fileID: 11400000, guid: fe30048efa264b27b3a1c6790c9758f8, type: 2}
+    PacmanSpeedMultiplier: 1.03
+    GhostSpeedMultiplier: 1.15
+    FrightenedDuration: 5.5
+    GhostCount: 4
+  - Grid: {fileID: 11400000, guid: 7ff2a8743f5f409a866cbcc180fa2edb, type: 2}
+    PacmanSpeedMultiplier: 1.035
+    GhostSpeedMultiplier: 1.175
+    FrightenedDuration: 5.25
+    GhostCount: 4
+  - Grid: {fileID: 11400000, guid: f487e548b753408b92031334bb3aa84d, type: 2}
+    PacmanSpeedMultiplier: 1.04
+    GhostSpeedMultiplier: 1.2
+    FrightenedDuration: 5.0
+    GhostCount: 4
+  - Grid: {fileID: 11400000, guid: 57d8cb40744f40b0941c3b4fbacde4a1, type: 2}
+    PacmanSpeedMultiplier: 1.045
+    GhostSpeedMultiplier: 1.225
+    FrightenedDuration: 4.75
+    GhostCount: 4
+  - Grid: {fileID: 11400000, guid: 00556480e3b94db3bb1146f35cff35f8, type: 2}
+    PacmanSpeedMultiplier: 1.05
+    GhostSpeedMultiplier: 1.25
+    FrightenedDuration: 4.5
+    GhostCount: 4
+  - Grid: {fileID: 11400000, guid: 0bb5a0d80e584e83aff8723a1a289499, type: 2}
+    PacmanSpeedMultiplier: 1.055
+    GhostSpeedMultiplier: 1.275
+    FrightenedDuration: 4.25
+    GhostCount: 4
+  - Grid: {fileID: 11400000, guid: d9892aa5db6144d39bf8b42a9da57f25, type: 2}
+    PacmanSpeedMultiplier: 1.06
+    GhostSpeedMultiplier: 1.3
+    FrightenedDuration: 4.0
+    GhostCount: 4
+  - Grid: {fileID: 11400000, guid: 934b7f725b704152a3ed01b3868d253e, type: 2}
+    PacmanSpeedMultiplier: 1.065
+    GhostSpeedMultiplier: 1.325
+    FrightenedDuration: 3.75
+    GhostCount: 4
+  - Grid: {fileID: 11400000, guid: e0ab9e9ee82d4aa29ea7abac9ea98a12, type: 2}
+    PacmanSpeedMultiplier: 1.07
+    GhostSpeedMultiplier: 1.35
+    FrightenedDuration: 3.5
+    GhostCount: 4
+  - Grid: {fileID: 11400000, guid: c6f209dfcca141ec9bb239ad3d045f0d, type: 2}
+    PacmanSpeedMultiplier: 1.075
+    GhostSpeedMultiplier: 1.375
+    FrightenedDuration: 3.25
+    GhostCount: 4
+  - Grid: {fileID: 11400000, guid: ecfc9b3cf0764f07abbcd2da69b9a653, type: 2}
+    PacmanSpeedMultiplier: 1.08
+    GhostSpeedMultiplier: 1.4
+    FrightenedDuration: 3.0
+    GhostCount: 4
+  - Grid: {fileID: 11400000, guid: 2526ed284ce44fecad16da62f8f5c316, type: 2}
+    PacmanSpeedMultiplier: 1.085
+    GhostSpeedMultiplier: 1.425
+    FrightenedDuration: 2.75
+    GhostCount: 4
+  - Grid: {fileID: 11400000, guid: 15597882ec0e496c84b4d74b38dbd43b, type: 2}
+    PacmanSpeedMultiplier: 1.09
+    GhostSpeedMultiplier: 1.45
+    FrightenedDuration: 2.5
+    GhostCount: 4
+  - Grid: {fileID: 11400000, guid: ff739446727847adb5d3ca950b894f88, type: 2}
+    PacmanSpeedMultiplier: 1.095
+    GhostSpeedMultiplier: 1.475
+    FrightenedDuration: 2.25
+    GhostCount: 4
