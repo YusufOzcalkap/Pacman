@@ -20,16 +20,12 @@ namespace CMP.Scripts.Hud
 
         private readonly List<Image> _icons = new();
 
-        public LivesDisplay(Sprite iconSprite, int maxLives)
+        public LivesDisplay(Transform parent, Sprite iconSprite, int maxLives)
         {
-            var root = new GameObject("Hud");
-            var canvas = root.AddComponent<Canvas>();
-            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-
             for (var i = 0; i < maxLives; i++)
             {
                 var iconObject = new GameObject($"Life_{i}");
-                iconObject.transform.SetParent(root.transform, false);
+                iconObject.transform.SetParent(parent, false);
 
                 var image = iconObject.AddComponent<Image>();
                 image.sprite = iconSprite;

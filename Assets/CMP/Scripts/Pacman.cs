@@ -56,9 +56,31 @@ namespace CMP.Scripts
         /// </summary>
         public void SetRequestedDirection(Direction direction)
         {
-            if (direction != Direction.None)
+            if (direction == Direction.None)
             {
-                _requestedDirection = direction;
+                return;
+            }
+
+            // Arcade'deki gibi anında ters dönüş: hücre merkezini beklemek yerine
+            // devam eden adım geri sarılır. Hedef, zaten içinden çıktığımız hücre
+            // olduğu için yürünebilirlik kontrolü gerekmez.
+            if (_mover.IsMoving && CurrentDirection != Direction.None &&
+                direction == CurrentDirection.Reverse())
+            {
+                CurrentDirection = direction;
+                _requestedDirection = Direction.None;
+                Animator.transform.rotation = direction.ToRightFacingRotation();
+                _mover.ReverseStep();
+                return;
+            }
+
+            _requestedDirection = direction;
+
+            // Dururken (READY, duvara dayanma) istenen yöne dönmek, girdinin
+            // alındığını oyuncuya anında gösterir.
+            if (!_mover.IsMoving)
+            {
+                Animator.transform.rotation = direction.ToRightFacingRotation();
             }
         }
 

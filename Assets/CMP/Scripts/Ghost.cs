@@ -54,11 +54,16 @@ namespace CMP.Scripts
         /// <summary>Gövde rengi; hata ayıklama görselleştirmesi çizimleri bununla eşleştirir.</summary>
         public Color BodyColor { get; private set; } = Color.white;
 
+        private const float EyeLookOffset = 0.05f;
+        private const float EyeLookSpeed = 12f;
+
         private GridMover _mover;
         private GhostBlackboard _blackboard;
         private GhostState _currentState;
         private SpriteRenderer _spriteRenderer;
         private Tween _blinkTween;
+        private Vector3 _leftEyeBasePosition;
+        private Vector3 _rightEyeBasePosition;
 
         private SpriteRenderer SpriteRenderer =>
             _spriteRenderer != null ? _spriteRenderer : _spriteRenderer = GetComponent<SpriteRenderer>();
@@ -68,6 +73,8 @@ namespace CMP.Scripts
         {
             Personality = personality;
             JoinDelay = joinDelay;
+            _leftEyeBasePosition = LeftEye.transform.localPosition;
+            _rightEyeBasePosition = RightEye.transform.localPosition;
 
             _mover = new GridMover(transform, gridData, rules.GhostStepDuration);
             _mover.Arrived += cell => _currentState.OnArrivedAtCell(cell);
@@ -274,6 +281,23 @@ namespace CMP.Scripts
         public void Tick()
         {
             _currentState.Update();
+            UpdateEyeLook();
+        }
+
+        /// <summary>
+        /// Gözbebekleri gittiği yöne kayar; durunca merkeze döner. Yenilmiş halde
+        /// geriye yalnızca gözler kaldığı için orada da yönü bunlar anlatır.
+        /// </summary>
+        private void UpdateEyeLook()
+        {
+            var direction = CurrentDirection.ToVector2Int();
+            var offset = new Vector3(direction.x, direction.y, 0f) * EyeLookOffset;
+            var lerpFactor = Time.deltaTime * EyeLookSpeed;
+
+            LeftEye.transform.localPosition = Vector3.Lerp(
+                LeftEye.transform.localPosition, _leftEyeBasePosition + offset, lerpFactor);
+            RightEye.transform.localPosition = Vector3.Lerp(
+                RightEye.transform.localPosition, _rightEyeBasePosition + offset, lerpFactor);
         }
 
         public void Stop()

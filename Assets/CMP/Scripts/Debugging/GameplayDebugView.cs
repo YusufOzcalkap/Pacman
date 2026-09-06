@@ -174,14 +174,13 @@ namespace CMP.Scripts.Debugging
 
         private void OnGUI()
         {
-            EnsureStyles();
-
+            // Kapalıyken ekranda hiçbir iz bırakmaz; varlığı README'de not edilir.
             if (!_isVisible)
             {
-                GUI.Label(new Rect(10f, 10f, 300f, 30f), $"{ToggleKey}: debug", _labelStyle);
                 return;
             }
 
+            EnsureStyles();
             DrawStatePanel();
             DrawGhostLabels();
         }

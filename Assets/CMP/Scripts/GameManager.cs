@@ -14,6 +14,9 @@ namespace CMP.Scripts
         Scatter,
         Chase,
 
+        /// <summary>Level başı "READY!" duraklaması; kimse hareket etmez, girdi okunmaz.</summary>
+        Ready,
+
         /// <summary>Can kaybedildi; fail animasyonu oynarken oyun bekliyor, sonra tur yeniden kurulacak.</summary>
         LifeLost,
         GameOver,
@@ -53,7 +56,7 @@ namespace CMP.Scripts
         private readonly List<Ghost> _ghosts = new();
 
         private PelletManager _pelletManager;
-        private LivesDisplay _livesDisplay;
+        private GameHud _hud;
         private GameplayDebugView _debugView;
         private int _ghostEatenStreak;
         private int _waveIndex;
@@ -76,7 +79,7 @@ namespace CMP.Scripts
             _levelSet = AssetDatabase.Instance.LevelSet;
             _inputManager = Instantiate(AssetDatabase.Instance.InputManagerPrefab);
             _debugView = gameObject.AddComponent<GameplayDebugView>();
-            CreateLivesDisplay();
+            CreateHud();
 
             LoadLevel(0);
         }
@@ -84,10 +87,13 @@ namespace CMP.Scripts
         /// <summary>
         /// Bir level'ı sıfırdan kurar. Level'a ait her şey tek bir kök nesnenin altında
         /// yaşadığı için önceki level'ı temizlemek o kökü yok etmekten ibarettir.
-        /// Skor ve canlar level'lar arasında taşınır.
+        /// Skor level'lar arasında taşınır; canlar her level başında tazelenir.
         /// </summary>
         private void LoadLevel(int levelIndex)
         {
+            Lives = GameSettings.StartingLives;
+            _hud.SetLives(Lives);
+
             if (_levelRoot != null)
             {
                 Destroy(_levelRoot);
@@ -112,7 +118,26 @@ namespace CMP.Scripts
             CreateGhosts(_gridData);
 
             _debugView.Initialize(this, _gridData, _pacman, _ghosts);
-            StartWave(0);
+
+            _hud.SetLevel(LevelNumber);
+            _hud.SetScore(Score);
+            BeginReadyPhase();
+        }
+
+        /// <summary>
+        /// "READY!" duraklaması: level kurulu ama kimse oynamıyor; süre dolunca
+        /// dalga tablosu baştan başlar ve oyun açılır.
+        /// </summary>
+        private void BeginReadyPhase()
+        {
+            _gameMode = GameMode.Ready;
+            _hud.ShowBanner("READY!");
+
+            DOVirtual.DelayedCall(GameSettings.ReadyDuration, () =>
+            {
+                _hud.HideBanner();
+                StartWave(0);
+            }).SetLink(gameObject);
         }
 
         /// <summary>
@@ -121,6 +146,15 @@ namespace CMP.Scripts
         /// </summary>
         private void Update()
         {
+            if (_gameMode == GameMode.Ready)
+            {
+                // READY sırasında hareket yok ama girdi yutulmaz: oyuncu yönünü
+                // önceden seçer, Pacman o yöne dönerek "aldım" der ve oyun açılır
+                // açılmaz seçilen yönde yola çıkar.
+                _pacman.SetRequestedDirection(_inputManager.ConsumeInput());
+                return;
+            }
+
             if (_gameMode is GameMode.LifeLost or GameMode.GameOver or GameMode.LevelComplete)
             {
                 return;
@@ -159,7 +193,7 @@ namespace CMP.Scripts
                 return;
             }
 
-            Score += gainedScore;
+            AddScore(gainedScore);
 
             if (isPowerPellet)
             {
@@ -183,6 +217,7 @@ namespace CMP.Scripts
         {
             _gameMode = GameMode.LevelComplete;
             StopAllCharacters();
+            _hud.ShowBanner($"LEVEL {LevelNumber} COMPLETE!");
 
             DOVirtual.DelayedCall(GameSettings.LevelCompleteDelay, () => LoadLevel(_levelIndex + 1))
                 .SetLink(gameObject);
@@ -229,7 +264,7 @@ namespace CMP.Scripts
         private void EatGhost(Ghost ghost)
         {
             var scoreIndex = Mathf.Min(_ghostEatenStreak, GameSettings.GhostEatenScores.Length - 1);
-            Score += GameSettings.GhostEatenScores[scoreIndex];
+            AddScore(GameSettings.GhostEatenScores[scoreIndex]);
             _ghostEatenStreak++;
 
             ghost.EnterEaten();
@@ -245,26 +280,46 @@ namespace CMP.Scripts
         /// </summary>
         /// <summary>
         /// Can ikonunun sprite'ı Pacman'in kendi prefabından alınır; ayrı asset gerekmez.
-        /// Gösterge level'lar arasında yaşadığı için sahnedeki örneğe değil prefaba bakar.
+        /// HUD level'lar arasında yaşadığı için sahnedeki örneğe değil prefaba bakar.
         /// </summary>
-        private void CreateLivesDisplay()
+        private void CreateHud()
         {
             var pacmanSprite = AssetDatabase.Instance.PacmanPrefab.Animator
                 .GetComponent<SpriteRenderer>().sprite;
-            _livesDisplay = new LivesDisplay(pacmanSprite, GameSettings.StartingLives);
-            _livesDisplay.SetLives(Lives);
+            _hud = new GameHud(pacmanSprite, GameSettings.StartingLives, RestartGame);
+            _hud.SetLives(Lives);
+        }
+
+        /// <summary>Oyun sonu panelindeki "Tekrar Oyna": sahneyi sıfırdan yükler.</summary>
+        private void RestartGame()
+        {
+            DOTween.KillAll();
+            UnityEngine.SceneManagement.SceneManager.LoadScene(
+                UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex);
+        }
+
+        /// <summary>Skorun tek giriş noktası; HUD'un güncel kalmasını garanti eder.</summary>
+        private void AddScore(int amount)
+        {
+            Score += amount;
+            _hud.SetScore(Score);
         }
 
         private void LoseLife()
         {
             Lives--;
-            _livesDisplay.SetLives(Lives);
+            _hud.SetLives(Lives);
             StopAllCharacters();
             _pacman.PlayFailAnimation();
 
             if (Lives <= 0)
             {
                 _gameMode = GameMode.GameOver;
+
+                // Panel, fail animasyonu bittikten sonra açılır; oyuncu önce ne
+                // olduğunu görsün.
+                DOVirtual.DelayedCall(GameSettings.LifeLostResetDelay,
+                    () => _hud.ShowGameOverPanel(Score)).SetLink(gameObject);
                 return;
             }
 
@@ -287,7 +342,7 @@ namespace CMP.Scripts
             }
 
             _ghostEatenStreak = 0;
-            StartWave(0);
+            BeginReadyPhase();
         }
 
         private void StopAllCharacters()

@@ -120,7 +120,12 @@ namespace CMP.Scripts
                 label.transform.rotation = Quaternion.identity;
 
                 var direction = layout.Direction;
-                button.GetComponent<Button>().onClick.AddListener(() => _currentDirection = direction);
+                var buttonComponent = button.GetComponent<Button>();
+                buttonComponent.onClick.AddListener(() => _currentDirection = direction);
+
+                // Ok tuşları EventSystem'in buton seçimini gezdirmesin: tıklanan buton
+                // "seçili" kalıyor ve sonraki ok tuşları UI navigasyonuna karışıyordu.
+                buttonComponent.navigation = new Navigation { mode = Navigation.Mode.None };
             }
         }
 

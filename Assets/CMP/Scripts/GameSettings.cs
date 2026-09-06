@@ -157,5 +157,8 @@ namespace CMP.Scripts
 
         /// <summary>Level tamamlandıktan sonra sıradaki levele geçmeden önceki bekleme.</summary>
         public const float LevelCompleteDelay = 2f;
+
+        /// <summary>Level başındaki "READY!" duraklaması; oyuncu haritaya göz atar.</summary>
+        public const float ReadyDuration = 1.5f;
     }
 }
